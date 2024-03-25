@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const escape = require("pg-format");
 const model = {};
 
 // mengambil data user untuk kebutuhan login berdasarkan email
@@ -70,6 +71,39 @@ model.getProfile = (id) => {
         reject(error);
       });
   });
+};
+
+model.getBy = async (search, idToken) => {
+  try {
+    let filterQuery = "";
+
+    if (search) {
+      filterQuery += search
+        ? escape("AND username like %L", `%${search}%`)
+        : "";
+    }
+
+    const data = await db.query(
+      `
+              SELECT 
+                  u.username, u.image,
+                  string_agg(p.phone_number, ', ') AS phone
+              FROM public.users u
+              JOIN public.phone p ON p.user_id = u.id 
+              WHERE true and u.id != $1 ${filterQuery}
+              GROUP BY u.id
+          `,
+      [idToken]
+    );
+
+    if (data.rows <= 0) {
+      return "data not found";
+    } else {
+      return { data: data.rows };
+    }
+  } catch (error) {
+    throw error;
+  }
 };
 
 module.exports = model;
