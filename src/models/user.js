@@ -55,4 +55,21 @@ model.updateImageUser = (image, id_user) => {
   });
 };
 
+model.getProfile = (id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT u.*, string_agg(p.phone_number, ', ') AS phone FROM users u 
+      left JOIN public.phone p ON p.user_id = u.id WHERE u.id = $1 group by u.id`,
+      [id]
+    )
+      .then((res) => {
+        let result = res.rows;
+        resolve(result);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
 module.exports = model;
