@@ -10,6 +10,7 @@ routers.patch(
   uploadMiddleware.uploadUser,
   userController.updateImageUser
 );
+routers.get("/", authMiddleware.authentication, userController.getProfile);
 
 routers.use("/image", express.static("./public/upload/user"));
 
