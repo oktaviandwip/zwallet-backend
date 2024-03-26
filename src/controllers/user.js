@@ -46,4 +46,17 @@ controller.getAllUser = async (req, res) => {
   }
 };
 
+controller.checkPin = async (req, res) => {
+  try {
+    const result = await model.getProfile(req.decodeToken.id);
+    const pin = result[0].pin;
+    if (pin != req.body.pin) {
+      return response(res, 401, "Incorrect Pin");
+    }
+    return response(res, 200, "Pin Verified Successfully");
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+
 module.exports = controller;

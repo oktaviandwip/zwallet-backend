@@ -15,4 +15,6 @@ routers.post(
   transController.getHistory
 );
 
+routers.post("/:id", authMiddleware.authentication, transController.transfer);
+
 module.exports = routers;

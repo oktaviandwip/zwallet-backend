@@ -9,5 +9,6 @@ routers.use("/user", userRoutes);
 routers.use("/auth", authRoutes);
 routers.use("/transaction", transRoutes);
 routers.use("/phone", phoneRoutes);
+routers.use("/transaction", transRoutes);
 
 module.exports = routers;
