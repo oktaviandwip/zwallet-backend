@@ -29,4 +29,21 @@ controller.updateImageUser = async (req, res) => {
   }
 };
 
+controller.getProfile = async (req, res) => {
+  try {
+    const result = await model.getProfile(req.decodeToken.id);
+    return response(res, 200, result);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+controller.getAllUser = async (req, res) => {
+  try {
+    const result = await model.getBy(req.query.search, req.decodeToken.id);
+    return response(res, 200, result);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+
 module.exports = controller;
