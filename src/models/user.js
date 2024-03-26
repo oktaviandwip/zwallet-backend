@@ -76,7 +76,7 @@ model.getProfile = (id) => {
 model.getBy = async (search, idToken) => {
   try {
     let filterQuery = "";
-
+    console.log(search);
     if (search) {
       filterQuery += search
         ? escape("AND username like %L", `%${search}%`)
@@ -86,7 +86,7 @@ model.getBy = async (search, idToken) => {
     const data = await db.query(
       `
               SELECT 
-                  u.id u.username, u.image,
+                  u.id, u.username, u.image,
                   string_agg(p.phone_number, ', ') AS phone
               FROM public.users u
               JOIN public.phone p ON p.user_id = u.id 
@@ -104,6 +104,41 @@ model.getBy = async (search, idToken) => {
   } catch (error) {
     throw error;
   }
+};
+
+model.updatePin = (pin, id_user) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `UPDATE users SET
+                pin = $1,
+                updated_at = now()
+            WHERE id = $2`,
+      [pin, id_user]
+    )
+      .then((res) => {
+        resolve(`${res.rowCount} user updated`);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+model.updatePass = (password, id_user) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `UPDATE users SET
+                password = $1,
+                updated_at = now()
+            WHERE id = $2`,
+      [password, id_user]
+    )
+      .then((res) => {
+        resolve(`${res.rowCount} user updated`);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
 };
 
 module.exports = model;

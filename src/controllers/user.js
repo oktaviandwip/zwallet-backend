@@ -59,4 +59,48 @@ controller.checkPin = async (req, res) => {
   }
 };
 
+controller.updatePass = async (req, res) => {
+  try {
+    const password = req.body.password ? req.body.password : true;
+    const newPassword = req.body.newpassword ? req.body.newpassword : true;
+    const confirmNewPassword = req.body.confirmnewpassword
+      ? req.body.confirmnewpassword
+      : false;
+
+    const result = await model.getProfile(req.decodeToken.id);
+    const currenPass = result[0].password;
+    if (password != currenPass) {
+      return response(res, 401, "Incorrect Password");
+    }
+    if (newPassword !== confirmNewPassword) {
+      return response(
+        res,
+        401,
+        "New Password and Comfirm Password do not match"
+      );
+    }
+
+    const data = await model.updatePass(newPassword, req.decodeToken.id);
+
+    return response(res, 200, data);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+controller.updatePin = async (req, res) => {
+  try {
+    console.log("yo");
+    const pin = req.body.pin ? req.body.pin : null;
+    console.log(pin);
+    if (!pin) {
+      return response(res, 401, "Please Input Pin");
+    }
+    const data = await model.updatePin(pin, req.decodeToken.id);
+
+    return response(res, 200, data);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+
 module.exports = controller;
