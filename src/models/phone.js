@@ -3,7 +3,9 @@ const db = require("../config/db");
 const model = {
   getPhone: (idUser) => {
     return new Promise((resolve, reject) => {
-      db.query(`select phone_number from phone where user_id = $1`, [idUser])
+      db.query(`select id, phone_number from phone where user_id = $1`, [
+        idUser,
+      ])
         .then((res) => {
           let result = res.rows;
           if (result <= 0) {
