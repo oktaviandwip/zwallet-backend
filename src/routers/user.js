@@ -1,34 +1,39 @@
-const express = require("express");
-const routers = express.Router();
-const userController = require("../controllers/user.js");
-const authMiddleware = require("../middleware/auth.js");
-const uploadMiddleware = require("../middleware/upload.js");
+const express = require('express')
+const routers = express.Router()
+const userController = require('../controllers/user.js')
+const authMiddleware = require('../middleware/auth.js')
+const uploadMiddleware = require('../middleware/upload.js')
 
 routers.patch(
-  "/image",
+  '/image',
   authMiddleware.authentication,
   uploadMiddleware.uploadUser,
   userController.updateImageUser
-);
-routers.get("/", authMiddleware.authentication, userController.getProfile);
+)
+routers.get('/', authMiddleware.authentication, userController.getProfile)
 
-routers.use("/image", express.static("./public/upload/user"));
+routers.use('/image', express.static('./public/upload/user'))
 
-routers.get("/all", authMiddleware.authentication, userController.getAllUser);
+routers.get(
+  '/allusers',
+  authMiddleware.authentication,
+  userController.getAllUsers
+)
+routers.get('/all', authMiddleware.authentication, userController.getAllUser)
 routers.post(
-  "/checkpin",
+  '/checkpin',
   authMiddleware.authentication,
   userController.checkPin
-);
+)
 routers.patch(
-  "/updatepin",
+  '/updatepin',
   authMiddleware.authentication,
   userController.updatePin
-);
+)
 routers.patch(
-  "/updatepass",
+  '/updatepass',
   authMiddleware.authentication,
   userController.updatePass
-);
+)
 
-module.exports = routers;
+module.exports = routers
