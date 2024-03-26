@@ -20,5 +20,15 @@ routers.post(
   authMiddleware.authentication,
   userController.checkPin
 );
+routers.patch(
+  "/updatepin",
+  authMiddleware.authentication,
+  userController.updatePin
+);
+routers.patch(
+  "/updatepass",
+  authMiddleware.authentication,
+  userController.updatePass
+);
 
 module.exports = routers;
