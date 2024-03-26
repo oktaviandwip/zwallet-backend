@@ -15,5 +15,10 @@ routers.get("/", authMiddleware.authentication, userController.getProfile);
 routers.use("/image", express.static("./public/upload/user"));
 
 routers.get("/all", authMiddleware.authentication, userController.getAllUser);
+routers.post(
+  "/checkpin",
+  authMiddleware.authentication,
+  userController.checkPin
+);
 
 module.exports = routers;

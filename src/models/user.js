@@ -86,7 +86,7 @@ model.getBy = async (search, idToken) => {
     const data = await db.query(
       `
               SELECT 
-                  u.username, u.image,
+                  u.id u.username, u.image,
                   string_agg(p.phone_number, ', ') AS phone
               FROM public.users u
               JOIN public.phone p ON p.user_id = u.id 
