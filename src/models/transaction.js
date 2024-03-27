@@ -1,4 +1,4 @@
-const db = require("../config/db");
+const db = require('../config/db')
 
 const model = {
   getBalance: (id, date) => {
@@ -26,15 +26,15 @@ const model = {
           [id]
         )
           .then((res) => {
-            let result = res.rows;
+            let result = res.rows
             if (result <= 0) {
-              result = "Data not found";
+              result = 'Data not found'
             }
-            resolve(result);
+            resolve(result)
           })
           .catch((err) => {
-            reject(err);
-          });
+            reject(err)
+          })
       } else {
         db.query(
           `WITH income AS (
@@ -62,17 +62,17 @@ const model = {
           [id, date]
         )
           .then((res) => {
-            let result = res.rows;
+            let result = res.rows
             if (result <= 0) {
-              result = "Data not found";
+              result = 'Data not found'
             }
-            resolve(result);
+            resolve(result)
           })
           .catch((err) => {
-            reject(err);
-          });
+            reject(err)
+          })
       }
-    });
+    })
   },
 
   getHistory: ({ id, type, weekRange, monthRange }) => {
@@ -90,19 +90,19 @@ const model = {
             [id]
           )
             .then((res) => {
-              let result = res.rows;
+              let result = res.rows
               if (result <= 0) {
-                result = "Data not found";
+                result = 'Data not found'
               }
-              resolve(result);
+              resolve(result)
             })
             .catch((err) => {
-              reject(err);
-            });
+              reject(err)
+            })
         } else {
           if (weekRange) {
-            const startDate = weekRange[0];
-            const endDate = weekRange[1];
+            const startDate = weekRange[0]
+            const endDate = weekRange[1]
             db.query(
               `SELECT t.sender_id, t.receiver_id, t.amount, t.notes, t.date_transaction, sender.image AS sender_image,  
              sender.username AS sender_username, receiver.image AS receiver_image, receiver.username AS receiver_username FROM transactions t
@@ -114,18 +114,18 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           } else if (monthRange) {
-            const startDate = monthRange[0];
-            const endDate = monthRange[1];
+            const startDate = monthRange[0]
+            const endDate = monthRange[1]
             db.query(
               `SELECT t.sender_id, t.receiver_id, t.amount, t.notes, t.date_transaction, sender.image AS sender_image,  
              sender.username AS sender_username, receiver.image AS receiver_image, receiver.username AS receiver_username FROM transactions t
@@ -137,22 +137,22 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           }
         }
       } else {
-        if (type === "income") {
+        if (type === 'income') {
           if (weekRange) {
-            const startDate = weekRange[0];
-            const endDate = weekRange[1];
+            const startDate = weekRange[0]
+            const endDate = weekRange[1]
             db.query(
               `SELECT t.sender_id, t.amount, t.notes, t.date_transaction, sender.image AS sender_image,  
                sender.username AS sender_username FROM transactions t
@@ -163,18 +163,18 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           } else if (monthRange) {
-            const startDate = monthRange[0];
-            const endDate = monthRange[1];
+            const startDate = monthRange[0]
+            const endDate = monthRange[1]
             db.query(
               `SELECT t.sender_id, t.amount, t.notes, t.date_transaction, sender.image AS sender_image,  
                sender.username AS sender_username FROM transactions t
@@ -185,20 +185,20 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           }
-        } else if (type === "expense") {
+        } else if (type === 'expense') {
           if (weekRange) {
-            const startDate = weekRange[0];
-            const endDate = weekRange[1];
+            const startDate = weekRange[0]
+            const endDate = weekRange[1]
             db.query(
               `SELECT t.sender_id, t.receiver_id, t.amount, t.notes, t.date_transaction, receiver.image AS receiver_image,   
                receiver.username AS receiver_username FROM transactions t
@@ -209,18 +209,18 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           } else if (monthRange) {
-            const startDate = monthRange[0];
-            const endDate = monthRange[1];
+            const startDate = monthRange[0]
+            const endDate = monthRange[1]
             db.query(
               `SELECT t.sender_id, t.receiver_id, t.amount, t.notes, t.date_transaction, receiver.image AS receiver_image, 
                receiver.username AS receiver_username FROM transactions t
@@ -231,19 +231,19 @@ const model = {
               [id, startDate, endDate]
             )
               .then((res) => {
-                let result = res.rows;
+                let result = res.rows
                 if (result <= 0) {
-                  result = "Data not found";
+                  result = 'Data not found'
                 }
-                resolve(result);
+                resolve(result)
               })
               .catch((err) => {
-                reject(err);
-              });
+                reject(err)
+              })
           }
         }
       }
-    });
+    })
   },
   transfer: (idToken, receiver, amount, notes) => {
     return new Promise((resolve, reject) => {
@@ -253,13 +253,61 @@ const model = {
         [idToken, receiver, amount, notes]
       )
         .then((res) => {
-          resolve(`${res.rowCount} data created`);
+          resolve(`${res.rowCount} data created`)
         })
         .catch((err) => {
-          reject(err);
-        });
-    });
+          reject(err)
+        })
+    })
   },
-};
+  newTransaction: (idToken, receiver, amount, notes) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Mulai transaksi database
+        await db.query('BEGIN')
 
-module.exports = model;
+        // Ambil saldo pengirim
+        const senderBalanceResult = await db.query(
+          'SELECT balance FROM users WHERE id = $1',
+          [idToken]
+        )
+        const senderBalance = senderBalanceResult.rows[0].balance
+
+        // Pastikan saldo cukup untuk transfer
+        if (senderBalance < amount) {
+          throw new Error('Insufficient balance')
+        }
+
+        // Kurangi saldo pengirim
+        await db.query(
+          'UPDATE users SET balance = balance - $1 WHERE id = $2',
+          [amount, idToken]
+        )
+
+        // Tambahkan saldo penerima
+        await db.query(
+          'UPDATE users SET balance = balance + $1 WHERE id = $2',
+          [amount, receiver]
+        )
+
+        // Simpan transaksi ke database
+        await db.query(
+          `INSERT INTO transactions (sender_id, receiver_id, amount, notes) 
+                  VALUES ($1, $2, $3, $4)`,
+          [idToken, receiver, amount, notes]
+        )
+
+        // Commit transaksi database
+        await db.query('COMMIT')
+
+        resolve('Transaction successful')
+      } catch (error) {
+        // Rollback transaksi database jika terjadi error
+        await db.query('ROLLBACK')
+        reject(error)
+      }
+    })
+  },
+}
+
+module.exports = model

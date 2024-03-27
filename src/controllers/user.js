@@ -73,7 +73,6 @@ controller.getAllUsers = async (req, res) => {
   try {
     const searchTerm = req.query.search || ''
     const users = await model.getAllUsers(searchTerm)
-    console.log(users)
     return response(res, 200, users)
   } catch (error) {
     return response(res, 500, 'Internal Server Error', error)
@@ -134,6 +133,19 @@ controller.updatePin = async (req, res) => {
     return response(res, 200, data)
   } catch (error) {
     return response(res, 500, error.message)
+  }
+}
+
+controller.getUserById = async (req, res) => {
+  try {
+    const { id } = req.params
+    const user = await model.getUserById(id)
+    if (!user) {
+      return response(res, 404, 'User not found')
+    }
+    return response(res, 200, { user })
+  } catch (error) {
+    return response(res, 500, 'Internal Server Error', error)
   }
 }
 

@@ -35,5 +35,5 @@ routers.patch(
   authMiddleware.authentication,
   userController.updatePass
 )
-
+routers.get('/:id', authMiddleware.authentication, userController.getUserById)
 module.exports = routers

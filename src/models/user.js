@@ -93,7 +93,6 @@ model.getProfile = (id) => {
 model.getBy = async (search, idToken) => {
   try {
     let filterQuery = ''
-    console.log('mode', search)
     if (search) {
       filterQuery += search ? escape('AND username like %L', `%${search}%`) : ''
     }
@@ -125,9 +124,11 @@ model.getAllUsers = async (searchTerm) => {
   try {
     let query = `
       SELECT 
-          id, username, email, image
+          u.id, u.username, u.email, u.image, p.phone_number
       FROM 
-          users
+          users u
+      LEFT JOIN 
+          phone p ON u.id = p.user_id
       WHERE 
           1 = 1`
 
@@ -173,6 +174,26 @@ model.updatePass = (password, id_user) => {
     )
       .then((res) => {
         resolve(`${res.rowCount} user updated`)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
+}
+
+model.getUserById = (id) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `
+      SELECT u.id, u.email, u.username, u.image, p.phone_number
+      FROM users u
+      LEFT JOIN phone p ON u.id = p.user_id
+      WHERE u.id = $1
+    `,
+      [id]
+    )
+      .then((res) => {
+        resolve(res.rows[0]) // Menggunakan rows[0] karena hanya mengambil satu baris
       })
       .catch((error) => {
         reject(error)
