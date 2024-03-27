@@ -37,7 +37,6 @@ controller.updateImageUser = async (req, res) => {
     }
     const result = await model.updateImageUser(image, req.decodeToken.id)
     console.log(req.file)
-    // cek apakah update mengirim file dan value db user.image tidak null
     if (image && dataExist[0].image) {
       const imageName = dataExist[0].image.replace(
         'http://localhost:3001/user/image/',

@@ -19,7 +19,6 @@ model.addUser = (userData) => {
       })
   })
 }
-
 // mengambil data user untuk kebutuhan login berdasarkan email
 model.getPassByEmail = (email) => {
   return new Promise((resolve, reject) => {
@@ -193,7 +192,7 @@ model.getUserById = (id) => {
       [id]
     )
       .then((res) => {
-        resolve(res.rows[0]) // Menggunakan rows[0] karena hanya mengambil satu baris
+        resolve(res.rows[0])
       })
       .catch((error) => {
         reject(error)

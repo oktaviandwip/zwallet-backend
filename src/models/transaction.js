@@ -263,46 +263,38 @@ const model = {
   newTransaction: (idToken, receiver, amount, notes) => {
     return new Promise(async (resolve, reject) => {
       try {
-        // Mulai transaksi database
         await db.query('BEGIN')
 
-        // Ambil saldo pengirim
         const senderBalanceResult = await db.query(
           'SELECT balance FROM users WHERE id = $1',
           [idToken]
         )
         const senderBalance = senderBalanceResult.rows[0].balance
 
-        // Pastikan saldo cukup untuk transfer
         if (senderBalance < amount) {
           throw new Error('Insufficient balance')
         }
 
-        // Kurangi saldo pengirim
         await db.query(
           'UPDATE users SET balance = balance - $1 WHERE id = $2',
           [amount, idToken]
         )
 
-        // Tambahkan saldo penerima
         await db.query(
           'UPDATE users SET balance = balance + $1 WHERE id = $2',
           [amount, receiver]
         )
 
-        // Simpan transaksi ke database
         await db.query(
           `INSERT INTO transactions (sender_id, receiver_id, amount, notes) 
                   VALUES ($1, $2, $3, $4)`,
           [idToken, receiver, amount, notes]
         )
 
-        // Commit transaksi database
         await db.query('COMMIT')
 
         resolve('Transaction successful')
       } catch (error) {
-        // Rollback transaksi database jika terjadi error
         await db.query('ROLLBACK')
         reject(error)
       }

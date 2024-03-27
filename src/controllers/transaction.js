@@ -8,20 +8,16 @@ const controller = {
       let data
 
       if (dates && Array.isArray(dates) && dates.length > 0) {
-        // Array to store promises for each date
         const promises = dates.map(async (date) => {
           return model.getBalance(req.decodeToken.id, date)
         })
 
-        // Wait for all promises to resolve
         const results = await Promise.all(promises)
 
-        // Combine results from all promises
         data = results.reduce((acc, result) => {
           return acc.concat(result)
         }, [])
       } else {
-        // Call getBalance without a specific date
         data = await model.getBalance(req.decodeToken.id)
       }
 

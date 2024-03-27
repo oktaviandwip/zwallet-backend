@@ -8,11 +8,6 @@ routers.post(
   authMiddleware.authentication,
   transController.getBalance
 )
-routers.get(
-  '/balance',
-  authMiddleware.authentication,
-  transController.getBalance
-)
 
 routers.post(
   '/history',
