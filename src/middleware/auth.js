@@ -19,4 +19,8 @@ const middleware = {
   },
 };
 
+<<<<<<< HEAD
 module.exports = middleware;
+=======
+module.exports = middleware;
+>>>>>>> taufik-backend
