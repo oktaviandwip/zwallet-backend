@@ -1,85 +1,74 @@
-const model = require('../models/transaction')
-const response = require('../utils/response')
+const model = require("../models/transaction");
+const response = require("../utils/response");
+const controllers = {};
 
-const controller = {
-  getBalance: async (req, res) => {
-    try {
-      const dates = req.body.dates
-      let data
+// Transfer
+controllers.newTransaction = async (req, res) => {
+  try {
+    const data = await model.newTransaction(req.body);
+    return response(res, 201, data);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
 
-      if (dates && Array.isArray(dates) && dates.length > 0) {
-        const promises = dates.map(async (date) => {
-          return model.getBalance(req.decodeToken.id, date)
-        })
-
-        const results = await Promise.all(promises)
-
-        data = results.reduce((acc, result) => {
-          return acc.concat(result)
-        }, [])
-      } else {
-        data = await model.getBalance(req.decodeToken.id)
-      }
-
-      console.log(data)
-      return response(res, 200, data)
-    } catch (error) {
-      return response(res, 500, error.message)
+// Get Balance
+controllers.getBalance = async (req, res) => {
+  try {
+    const { rows } = await model.getBalance(req.decodeToken.id);
+    if (rows.length === 0) {
+      return response(res, 500, "Data not found");
     }
-  },
+    return response(res, 200, rows);
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
 
-  getHistory: async (req, res) => {
-    try {
-      const weekRange = req.body.weekRange
-      const monthRange = req.body.monthRange
-      const type = req.body.type
-      const id = req.decodeToken.id
+// Get History
+controllers.getHistory = async (req, res) => {
+  try {
+    const { type } = req.params;
 
-      if (weekRange) {
-        data = await model.getHistory({ id, type, weekRange })
-      } else if (monthRange) {
-        data = await model.getHistory({ id, type, monthRange })
-      } else {
-        data = await model.getHistory({ id })
-      }
-
-      return response(res, 200, data)
-    } catch (error) {
-      return response(res, 500, error.message)
+    // All Transaction
+    if (type === "all") {
+      const weekly = await model.getHistory(req.decodeToken.id, "weekly");
+      const monthly = await model.getHistory(req.decodeToken.id, "monthly");
+      return response(res, 200, [{ weekly, monthly }]);
     }
-  },
-  transfer: async (req, res) => {
-    try {
-      const amount = req.body.amount ? req.body.amount : ''
-      const notes = req.body.notes ? req.body.notes : ''
-      const data = await model.transfer(
+
+    // Income/Expense Transaction
+    else if (type === "income" || type === "expense") {
+      const weekly = await model.getHistory(req.decodeToken.id, "weekly", type);
+      const monthly = await model.getHistory(
         req.decodeToken.id,
-        req.params.id,
-        amount,
-        notes
-      )
-
-      return response(res, 201, data)
-    } catch (error) {
-      return response(res, 500, error.message)
+        "monthly",
+        type
+      );
+      return response(res, 200, [{ weekly, monthly }]);
     }
-  },
-  newTransaction: async (req, res) => {
-    try {
-      const amount = req.body.amount ? req.body.amount : ''
-      const notes = req.body.notes ? req.body.notes : ''
-      const data = await model.newTransaction(
-        req.decodeToken.id,
-        req.params.id,
-        amount,
-        notes
-      )
 
-      return response(res, 201, data)
-    } catch (error) {
-      return response(res, 500, error.message)
+    // Transaction by Date Range
+    else if (type.includes("&")) {
+      const result = await model.getHistory(req.decodeToken.id, "date", type);
+      return response(res, 200, result);
     }
-  },
-}
 
-module.exports = controller
+    // Transaction for Notification
+    else if (type === "notif") {
+      const today = await model.getHistory(req.decodeToken.id, "today", type);
+      const weekly = await model.getHistory(req.decodeToken.id, "weekly", type);
+      return response(res, 200, [{ today, weekly }]);
+    }
+
+    // Latest Transaction for Home
+    else {
+      const result = await model.getHistory(req.decodeToken.id);
+      return response(res, 200, result);
+    }
+  } catch (error) {
+    return response(res, 500, error.message);
+  }
+};
+
+module.exports = controllers;

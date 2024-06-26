@@ -1,166 +1,196 @@
-const model = require("../models/user");
-const controller = {};
+const models = require("../models/user");
 const response = require("../utils/response");
 const hashing = require("../utils/hash");
 const fs = require("fs");
+const controllers = {};
+const bcrypt = require("bcrypt");
 
-// add data user
-controller.createUser = async (req, res) => {
-    try {
-        //check apakah email atau password sudah ada
-        const checkEmailOrUsername = await model.getPassword(req.body);
-        if (checkEmailOrUsername) {
-            if(checkEmailOrUsername.username == req.body.username){
-                return response(res, 500, `Username sudah terdaftar`);
-            }
-
-            if(checkEmailOrUsername.email == req.body.email){
-                return response(res, 500, `Email sudah terdaftar`);
-            }
-        }
-        
-        req.body.password = await hashing(req.body.password)
-        const result = await model.createNewUser(req.body)
-        return response(res, 200, result)
-    } catch (error) {
-        return response(res, 500, error.message)
-    }
-}
-
-// add pin user
-controller.createPin = async (req, res) => {
-    try {
-        const result = await model.createPin(req.body)
-        return response(res, 200, result)
-    } catch (error) {
-        return response(res, 500, error.message)
-    }
-}
-
-controller.checkEmail = async (req, res) => {
+// Check Email or Username
+controllers.checkEmail = async (req, res) => {
   try {
-        const check = await model.checkEmail(req.body.email)
-        if(!check) {
-          return response(res, 500, `Email tidak terdaftar`);
-        }
-        const data = check;
-        return response(res, 200, {message : `Email terdaftar`, data});
-  } catch (error) {
-    return response(res, 500, error.message);
+    const result = await models.checkEmail(req.body);
+
+    // Email or Username Available
+    if (result.rowCount === 0) {
+      return response(res, 200, "OK");
+    }
+
+    // Email or Username not Available
+    const data = result.rows[0];
+    if (data.username === req.body.username) {
+      return response(res, 400, "Username has been used!");
+    } else if (data.email === req.body.email) {
+      return response(res, 400, "Email has been used!");
+    }
+  } catch (err) {
+    return response(res, 500, err.message);
   }
 };
 
-controller.resetPassword = async (req, res) => {
+// Create User
+controllers.createUser = async (req, res) => {
   try {
-    req.body.password = await hashing(req.body.password)
-    
-    const data = await model.resetPassword(req.body)
-    return response(res, 200, data)
-
-
-  } catch (error) {
-    return response(res, 500, error.message);
+    req.body.password = await hashing(req.body.password);
+    const result = await models.createUser(req.body);
+    return response(res, 200, result);
+  } catch (err) {
+    return response(res, 500, err.message);
   }
 };
 
-
-controller.updateImageUser = async (req, res) => {
+// Get Profile
+controllers.getProfile = async (req, res) => {
   try {
-    console.log(req.file);
-    const image = `http://localhost:3001/user/image/${req.file.filename}`;
-    const dataExist = await model.getUserById(req.decodeToken.id);
-    if (dataExist === false) {
+    const result = await models.getUserById(req.decodeToken.id);
+    return response(res, 200, result);
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Update Profile
+controllers.updateProfile = async (req, res) => {
+  try {
+    req.body.username = req.body.username.toLowerCase();
+    const result = await models.updateData(req.body);
+    if (result.rowCount === 0) {
+      return response(res, 404, "User not found!");
+    } else {
+      return response(res, 200, "Profile update successful!");
+    }
+  } catch (err) {
+    if (err.message.includes("username")) {
+      return response(res, 500, "Username has been used!");
+    } else if (err.message.includes("email")) {
+      return response(res, 500, "Email has been used!");
+    } else if (err.message.includes("phone_number")) {
+      return response(res, 500, "Phone number has been used!");
+    } else {
+      return response(res, 500, err.message);
+    }
+  }
+};
+
+// Update Password
+controllers.updatePass = async (req, res) => {
+  try {
+    const { rows } = await models.getPassByEmail(req.body.email);
+    const check = await bcrypt.compare(req.body.password, rows[0].password);
+
+    if (check) {
+      req.body.newpassword = await hashing(req.body.newpassword);
+    } else {
+      return response(res, 401, "Incorrect current password!");
+    }
+
+    const result = await models.updatePass(req.body);
+    if (result.rowCount === 0) {
+      return response(res, 404, "User not found!");
+    } else {
+      return response(res, 200, result.rows[0].password);
+    }
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Update Pin
+controllers.updatePin = async (req, res) => {
+  try {
+    const result = await models.updatePin(req.body);
+    if (result.rowCount === 0) {
+      return response(res, 404, "User not found!");
+    } else {
+      return response(res, 200, result.rows[0].pin);
+    }
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Update Photo Profile
+controllers.updatePhoto = async (req, res) => {
+  try {
+    const image = `http://localhost:3001/image/${req.file.filename}`;
+    const { rows } = await models.getPassByEmail(req.body.email);
+    if (rows.length === 0) {
       return response(res, 404, "Data not found");
     }
-    const result = await model.updateImageUser(image, req.decodeToken.id);
-    console.log(req.file);
-    // cek apakah update mengirim file dan value db user.image tidak null
-    if (image && dataExist[0].image) {
-      const imageName = dataExist[0].image.replace(
-        "http://localhost:3001/user/image/",
+    const result = await models.updatePhotoProfile(image, req.body.email);
+
+    // Cek apakah update mengirim file dan value db user.photo_profile tidak null
+    if (image && rows[0].photo_profile) {
+      const imageName = rows[0].photo_profile.replace(
+        "http://localhost:3001/image/",
         ""
       );
-      const path = `./public/upload/user/${imageName}`;
-      fs.unlinkSync(path);
+      if (imageName !== "photo-profile.svg") {
+        const path = `./public/upload/${imageName}`;
+        fs.unlinkSync(path);
+      }
     }
     return response(res, 200, result);
-  } catch (error) {
-    return response(res, 500, error.message);
+  } catch (err) {
+    return response(res, 500, err.message);
   }
 };
 
-controller.getProfile = async (req, res) => {
+// Get All Receivers
+controllers.getAllReceivers = async (req, res) => {
   try {
-    const result = await model.getProfile(req.decodeToken.id);
+    const { rows } = await models.fetchAllReceivers(req.query.id);
+    return response(res, 200, rows);
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Get User
+controllers.getUser = async (req, res) => {
+  try {
+    const { rows } = await models.fetchUser(req.params.id);
+    return response(res, 200, rows);
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Search Receivers
+controllers.searchReceivers = async (req, res) => {
+  try {
+    const { rows } = await models.searchReceivers(req.query.name);
+    return response(res, 200, rows);
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
+};
+
+// Add Receiver
+controllers.addReceiver = async (req, res) => {
+  try {
+    const result = await models.addReceiver(req.body);
     return response(res, 200, result);
-  } catch (error) {
-    return response(res, 500, error.message);
-  }
-};
-controller.getAllUser = async (req, res) => {
-  try {
-    const result = await model.getBy(req.query.search, req.decodeToken.id);
-    return response(res, 200, result);
-  } catch (error) {
-    return response(res, 500, error.message);
-  }
-};
-
-controller.checkPin = async (req, res) => {
-  try {
-    const result = await model.getProfile(req.decodeToken.id);
-    const pin = result[0].pin;
-    if (pin != req.body.pin) {
-      return response(res, 401, "Incorrect Pin");
+  } catch (err) {
+    if (err.message.includes("unique constraint")) {
+      return response(res, 500, "Receiver already exists!");
+    } else {
+      return response(res, 500, err.message);
     }
-    return response(res, 200, "Pin Verified Successfully");
-  } catch (error) {
-    return response(res, 500, error.message);
   }
 };
 
-controller.updatePass = async (req, res) => {
+//Delete Receiver
+controllers.deleteReceiver = async (req, res) => {
   try {
-    const password = req.body.password ? req.body.password : true;
-    const newPassword = req.body.newpassword ? req.body.newpassword : true;
-    const confirmNewPassword = req.body.confirmnewpassword
-      ? req.body.confirmnewpassword
-      : false;
-
-    const result = await model.getProfile(req.decodeToken.id);
-    const currenPass = result[0].password;
-    if (password != currenPass) {
-      return response(res, 401, "Incorrect Password");
+    const { rowCount } = await models.deleteReceiver(req.query.id);
+    if (rowCount === 0) {
+      return response(res, 404, "User not Found");
+    } else {
+      return response(res, 200, "1 receiver deleted successfully!");
     }
-    if (newPassword !== confirmNewPassword) {
-      return response(
-        res,
-        401,
-        "New Password and Comfirm Password do not match"
-      );
-    }
-
-    const data = await model.updatePass(newPassword, req.decodeToken.id);
-
-    return response(res, 200, data);
-  } catch (error) {
-    return response(res, 500, error.message);
-  }
-};
-controller.updatePin = async (req, res) => {
-  try {
-    console.log("yo");
-    const pin = req.body.pin ? req.body.pin : null;
-    console.log(pin);
-    if (!pin) {
-      return response(res, 401, "Please Input Pin");
-    }
-    const data = await model.updatePin(pin, req.decodeToken.id);
-
-    return response(res, 200, data);
-  } catch (error) {
-    return response(res, 500, error.message);
+  } catch (err) {
+    return response(res, 500, err.message);
   }
 };
 
-module.exports = controller;
+module.exports = controllers;

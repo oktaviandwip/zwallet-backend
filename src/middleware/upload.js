@@ -1,104 +1,60 @@
-<<<<<<< HEAD
-const multer = require('multer')
-const response = require('../utils/response')
-const path = require('path')
-const { error } = require('console')
-=======
 const multer = require("multer");
 const response = require("../utils/response");
 const path = require("path");
-const { error } = require("console");
->>>>>>> taufik-backend
 
 const middleware = {
   uploadUser: (req, res, next) => {
     const storage = multer.diskStorage({
       destination: function (req, file, cb) {
-<<<<<<< HEAD
-        cb(null, './public/upload/user')
-      },
-      filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-        cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname)
-      },
-    })
-    const imageFilter = (req, file, cb) => {
-      const allowedExtentions = ['.jpeg', '.jpg', '.png', '.avif']
-      const extName = path.extname(file.originalname).toLowerCase()
-      console.log(extName)
-      const exactExt = allowedExtentions.includes(extName)
-      if (exactExt) {
-        return cb(null, true)
-      }
-      return cb(
-        'invalid file extention. Only PNG, JPG, and JPEG files are allowed',
-        false
-      )
-    }
-=======
-        cb(null, "./public/upload/user");
+        cb(null, "./public/upload");
       },
       filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
+        cb(
+          null,
+          (
+            file.fieldname +
+            "-" +
+            uniqueSuffix +
+            "-" +
+            file.originalname
+          ).replace(/[\s()]/g, "-")
+        );
       },
     });
     const imageFilter = (req, file, cb) => {
-      const allowedExtentions = [".jpeg", ".jpg", ".png"];
+      const allowedExtentions = [".jpeg", ".jpg", ".png", ".svg", ".avif"];
       const extName = path.extname(file.originalname).toLowerCase();
-      console.log(extName);
       const exactExt = allowedExtentions.includes(extName);
       if (exactExt) {
         return cb(null, true);
       }
       return cb(
-        "invalid file extention. Only PNG, JPG, and JPEG files are allowed",
+        {
+          message:
+            "Invalid file extention. Only PNG, JPG, JPEG, and SVG files are allowed!",
+        },
         false
       );
     };
->>>>>>> taufik-backend
     const upload = multer({
       storage: storage,
       fileFilter: imageFilter,
       limits: {
-        fileSize: 5 * 1024 * 1024, // Batas ukuran file (contoh: 5 MB)
+        fileSize: 1 * 1024 * 1024, // File size limit (e.g. 1 MB)
+        fieldSize: 1 * 1024 * 1024, // Form field size limit (e.g. 1 MB)
       },
-<<<<<<< HEAD
-    }).single('image')
-    upload(req, res, (err) => {
-      if (err instanceof multer.MulterError) {
-        // A Multer error occurred when uploading.
-        console.log('m')
-        return response(res, 500, err)
-      } else if (err) {
-        // An unknown error occurred when uploading.
-        console.log('a')
-        return response(res, 500, err)
-      }
-      // Everything went fine.
-      next()
-    })
-  },
-}
+    }).single("photo_profile");
 
-module.exports = middleware
-=======
-    }).single("image");
     upload(req, res, (err) => {
       if (err instanceof multer.MulterError) {
-        // A Multer error occurred when uploading.
-        console.log("m");
-        return response(res, 500, err);
+        return response(res, 500, err.message); // A Multer error occurred when uploading.
       } else if (err) {
-        // An unknown error occurred when uploading.
-        console.log("a");
-        return response(res, 500, err);
+        return response(res, 500, err.message); // An unknown error occurred when uploading.
       }
-      // Everything went fine.
-      next();
+      next(); // Everything went fine.
     });
   },
 };
 
 module.exports = middleware;
->>>>>>> taufik-backend
