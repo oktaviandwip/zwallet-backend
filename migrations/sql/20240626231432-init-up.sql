@@ -34,4 +34,8 @@ CREATE TABLE transactions (
 );
 
 INSERT INTO users (email, username, password, pin, name, phone_number, balance) VALUES
+('zwallet@gmail.com', 'zwallet', 'zwallet1234', '111111', 'zwallet', '088171022700', 1000000000),
 ('admin@gmail.com', 'admin', 'admin1234', '111111', 'admin', '085171022225', 1000000000);
+
+INSERT INTO transactions  (sender_id, receiver_id, amount, notes) VALUES
+(1, 2, 1000000000, 'Top Up');

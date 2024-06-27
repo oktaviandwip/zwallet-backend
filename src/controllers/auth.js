@@ -25,7 +25,7 @@ const controller = {
       const passwordUser = req.body.password;
 
       let check;
-      if (id === 1) {
+      if (id === 2) {
         if (password === passwordUser) {
           check = true;
         } else {
