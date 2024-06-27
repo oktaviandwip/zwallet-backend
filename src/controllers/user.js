@@ -125,8 +125,27 @@ controllers.updatePhoto = async (req, res) => {
         ""
       );
 
-      const path = `../../public/upload/${imageName}`;
-      fs.unlinkSync(path);
+      c// Construct the correct path to the image
+      const imagePath = path.join(__dirname, '../../public/upload', imageName);
+
+      // Check if the file exists before unlinking
+      fs.access(imagePath, fs.constants.F_OK, (err) => {
+        if (!err) {
+          fs.unlink(imagePath, (err) => {
+            if (err) {
+              console.error(`Failed to delete old image: ${err.message}`);
+            }
+          });
+        } else {
+          console.error(`File not found: ${imagePath}`);
+        }
+      });
+    }
+
+    return response(res, 200, result);
+  } catch (err) {
+    return response(res, 500, err.message);
+  }
     }
     return response(res, 200, result);
   } catch (err) {
