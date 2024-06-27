@@ -111,20 +111,17 @@ controllers.updatePin = async (req, res) => {
 // Update Photo Profile
 controllers.updatePhoto = async (req, res) => {
   try {
-    // const image = `https://zwallet-backend-production.up.railway.app/image/${req.file.filename}`;
+    const image = `https://zwallet-backend-production.up.railway.app/image/${req.file.filename}`;
     const { rows } = await models.getPassByEmail(req.body.email);
     if (rows.length === 0) {
       return response(res, 404, "Data not found");
     }
-    const result = await models.updatePhotoProfile(
-      req.body.photo_profile,
-      req.body.email
-    );
+    const result = await models.updatePhotoProfile(image, req.body.email);
 
     // // Cek apakah update mengirim file dan value db user.photo_profile tidak null
     // if (image && rows[0].photo_profile) {
     //   const imageName = rows[0].photo_profile.replace(
-    //     "https://zwallet-backend-production.up.railway.app/image/",
+    //     "http://localhost:3001/image/",
     //     ""
     //   );
 

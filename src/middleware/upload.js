@@ -22,21 +22,23 @@ const middleware = {
         );
       },
     });
+
     const imageFilter = (req, file, cb) => {
-      const allowedExtentions = [".jpeg", ".jpg", ".png", ".svg", ".avif"];
+      const allowedExtensions = [".jpeg", ".jpg", ".png", ".svg", ".avif"];
       const extName = path.extname(file.originalname).toLowerCase();
-      const exactExt = allowedExtentions.includes(extName);
+      const exactExt = allowedExtensions.includes(extName);
       if (exactExt) {
         return cb(null, true);
       }
       return cb(
         {
           message:
-            "Invalid file extention. Only PNG, JPG, JPEG, and SVG files are allowed!",
+            "Invalid file extension. Only PNG, JPG, JPEG, and SVG files are allowed!",
         },
         false
       );
     };
+
     const upload = multer({
       storage: storage,
       fileFilter: imageFilter,
