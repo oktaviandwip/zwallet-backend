@@ -67,14 +67,14 @@ models.updatePin = ({ pin, email }) => {
 };
 
 // Update Photo Profile
-models.updatePhotoProfile = (image, email) => {
+models.updatePhotoProfile = (photo_profile, email) => {
   return db.query(
     `UPDATE users SET
       photo_profile = $1,
       updated_at = now()
      WHERE email = $2
      RETURNING *`,
-    [image, email]
+    [photo_profile, email]
   );
 };
 

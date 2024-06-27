@@ -120,6 +120,7 @@ controllers.updatePhoto = async (req, res) => {
       req.body.photo_profile,
       req.body.email
     );
+    return response(res, 404, { error: "Sampai sini" });
 
     // // Cek apakah update mengirim file dan value db user.photo_profile tidak null
     // if (image && rows[0].photo_profile) {
