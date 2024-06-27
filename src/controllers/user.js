@@ -111,7 +111,7 @@ controllers.updatePin = async (req, res) => {
 // Update Photo Profile
 controllers.updatePhoto = async (req, res) => {
   try {
-    const image = `http://localhost:3001/image/${req.file.filename}`;
+    const image = `https://zwallet-backend-production.up.railway.app/image/${req.file.filename}`;
     const { rows } = await models.getPassByEmail(req.body.email);
     if (rows.length === 0) {
       return response(res, 404, "Data not found");
@@ -121,13 +121,12 @@ controllers.updatePhoto = async (req, res) => {
     // Cek apakah update mengirim file dan value db user.photo_profile tidak null
     if (image && rows[0].photo_profile) {
       const imageName = rows[0].photo_profile.replace(
-        "http://localhost:3001/image/",
+        "https://zwallet-backend-production.up.railway.app/image/",
         ""
       );
-      if (imageName !== "photo-profile.svg") {
-        const path = `./public/upload/${imageName}`;
-        fs.unlinkSync(path);
-      }
+
+      const path = `./public/upload/${imageName}`;
+      fs.unlinkSync(path);
     }
     return response(res, 200, result);
   } catch (err) {
