@@ -2,6 +2,7 @@ const models = require("../models/user");
 const response = require("../utils/response");
 const hashing = require("../utils/hash");
 const fs = require("fs");
+const path = require("path");
 const controllers = {};
 const bcrypt = require("bcrypt");
 
