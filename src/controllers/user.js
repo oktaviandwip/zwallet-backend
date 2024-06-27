@@ -116,7 +116,10 @@ controllers.updatePhoto = async (req, res) => {
     if (rows.length === 0) {
       return response(res, 404, "Data not found");
     }
-    const result = await models.updatePhotoProfile(image, req.body.email);
+    const result = await models.updatePhotoProfile(
+      req.body.photo_profile,
+      req.body.email
+    );
 
     // // Cek apakah update mengirim file dan value db user.photo_profile tidak null
     // if (image && rows[0].photo_profile) {
