@@ -125,8 +125,8 @@ controllers.updatePhoto = async (req, res) => {
         ""
       );
 
-      c// Construct the correct path to the image
-      const imagePath = path.join(__dirname, '../../public/upload', imageName);
+      c; // Construct the correct path to the image
+      const imagePath = path.join(__dirname, "../../public/upload", imageName);
 
       // Check if the file exists before unlinking
       fs.access(imagePath, fs.constants.F_OK, (err) => {
@@ -142,11 +142,6 @@ controllers.updatePhoto = async (req, res) => {
       });
     }
 
-    return response(res, 200, result);
-  } catch (err) {
-    return response(res, 500, err.message);
-  }
-    }
     return response(res, 200, result);
   } catch (err) {
     return response(res, 500, err.message);
