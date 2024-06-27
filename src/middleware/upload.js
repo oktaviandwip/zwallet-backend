@@ -6,7 +6,10 @@ const middleware = {
   uploadUser: (req, res, next) => {
     const storage = multer.diskStorage({
       destination: function (req, file, cb) {
-        cb(null, "./public/upload");
+        cb(
+          null,
+          "C:/Users/oktav/Desktop/weekly-tasks-fazztrack/week-5/backend/public/upload"
+        );
       },
       filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
