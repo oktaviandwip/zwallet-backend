@@ -50,7 +50,7 @@ const middleware = {
 
     upload(req, res, (err) => {
       if (err instanceof multer.MulterError) {
-        return response(res, 500, err.message); // A Multer error occurred when uploading.
+        return response(res, 400, err.message); // A Multer error occurred when uploading.
       } else if (err) {
         return response(res, 500, err.message); // An unknown error occurred when uploading.
       }
