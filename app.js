@@ -8,11 +8,10 @@ const cors = require("cors");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/image", express.static("./public/upload"));
-app.use(routers);
 const corsOptions = {
-  origin: "*", // Allow all origins
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow specific methods if needed
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow specific headers if needed
+  origin: "https://zwallet-putra.netlify.app", // your frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // allowed headers
 };
 app.use(cors(corsOptions));
 
