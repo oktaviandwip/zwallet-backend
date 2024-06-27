@@ -125,7 +125,7 @@ controllers.updatePhoto = async (req, res) => {
         ""
       );
 
-      c; // Construct the correct path to the image
+      // Construct the correct path to the image
       const imagePath = path.join(__dirname, "../../public/upload", imageName);
 
       // Check if the file exists before unlinking
