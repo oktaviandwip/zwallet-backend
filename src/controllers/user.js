@@ -125,7 +125,7 @@ controllers.updatePhoto = async (req, res) => {
         ""
       );
 
-      const path = `./public/upload/${imageName}`;
+      const path = `../../public/upload${imageName}`;
       fs.unlinkSync(path);
     }
     return response(res, 200, result);
