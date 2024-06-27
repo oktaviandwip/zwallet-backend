@@ -1,0 +1,13 @@
+services:
+    backend-express:
+        container_name: putra_zwallet
+        image: oktaviandwip/zwallet:2
+        restart: unless-stopped
+        ports:
+            - '3001:3001'
+        environment:
+            - DB_HOST=ep-old-darkness-a1nabqqg.ap-southeast-1.aws.neon.tech
+            - DB_USER=zwallet_owner
+            - DB_NAME=zwallet
+            - DB_PASSWORD=gRUIA1XM6aqO
+            - DB_PORT=5432
