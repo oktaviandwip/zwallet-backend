@@ -33,5 +33,5 @@ CREATE TABLE transactions (
 	CONSTRAINT receiver_fk FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE on update cascade
 );
 
-INSERT INTO users (email, username, password, pin, balance) VALUES
-('admin@gmail.com', 'admin', 'admin1234', '111111', 1000000000);
+INSERT INTO users (email, username, password, pin, name, phone_number, balance) VALUES
+('admin@gmail.com', 'admin', 'admin1234', '111111', 'admin', '085171022225', 1000000000);

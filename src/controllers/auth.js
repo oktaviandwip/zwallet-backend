@@ -7,7 +7,7 @@ const genToken = (id) => {
   const payload = {
     id,
   };
-  const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1w" });
+  const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "2w" });
   return token;
 };
 
@@ -15,17 +15,16 @@ const controller = {
   login: async (req, res) => {
     try {
       const result = await models.getPassByEmail(req.body.email);
-      console.log(result);
       if (result.rowCount === 0) {
         return response(res, 401, "Email not found!");
       }
 
-      const { role, id } = result.rows[0];
+      const { id } = result.rows[0];
       const password = result.rows[0].password;
       const passwordUser = req.body.password;
 
       let check;
-      if (role === "admin") {
+      if (id === 1) {
         if (password === passwordUser) {
           check = true;
         } else {
@@ -36,7 +35,7 @@ const controller = {
       }
 
       if (check) {
-        const tokenJwt = genToken(role, id);
+        const tokenJwt = genToken(id);
         return response(res, 200, {
           message: "Login succesful!",
           token: tokenJwt,
