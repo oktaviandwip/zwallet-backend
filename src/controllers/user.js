@@ -118,16 +118,16 @@ controllers.updatePhoto = async (req, res) => {
     }
     const result = await models.updatePhotoProfile(image, req.body.email);
 
-    // Cek apakah update mengirim file dan value db user.photo_profile tidak null
-    if (image && rows[0].photo_profile) {
-      const imageName = rows[0].photo_profile.replace(
-        "https://zwallet-backend-production.up.railway.app/image/",
-        ""
-      );
+    // // Cek apakah update mengirim file dan value db user.photo_profile tidak null
+    // if (image && rows[0].photo_profile) {
+    //   const imageName = rows[0].photo_profile.replace(
+    //     "https://zwallet-backend-production.up.railway.app/image/",
+    //     ""
+    //   );
 
-      const path = `./public/upload/${imageName}`;
-      fs.unlinkSync(path);
-    }
+    //   const path = `./public/upload/${imageName}`;
+    //   fs.unlinkSync(path);
+    // }
     return response(res, 200, result);
   } catch (err) {
     return response(res, 500, err.message);
