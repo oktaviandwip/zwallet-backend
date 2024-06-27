@@ -111,7 +111,7 @@ controllers.updatePin = async (req, res) => {
 // Update Photo Profile
 controllers.updatePhoto = async (req, res) => {
   try {
-    const image = `https://zwallet-backend-production.up.railway.app/image/${req.file.filename}`;
+    // const image = `https://zwallet-backend-production.up.railway.app/image/${req.file.filename}`;
     const { rows } = await models.getPassByEmail(req.body.email);
     if (rows.length === 0) {
       return response(res, 404, "Data not found");
