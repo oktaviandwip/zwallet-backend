@@ -34,7 +34,7 @@ npm start
 
 🌟 You are all set!
 
-## 📥 Contributing
+## 🤝 Contributing
 
 1. Fork the project
    
