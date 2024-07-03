@@ -16,7 +16,7 @@
 1. Clone the repository
 
 ```bash
-git clone https://github.com/oktaviandwip/weekly-tasks-fazztrack.git
+git clone https://github.com/oktaviandwip/zwallet-backend
 ```
 
 2. Install dependencies
